@@ -1,0 +1,18 @@
+mysql:
+    address:
+        - 127.0.0.1:13306
+    username: root
+    password: openIM123
+    database: openIM_v3
+    maxOpenConn: 1000
+    maxIdleConn: 100
+    maxLifeTime: 60
+mongo:
+    uri: ""
+    address:
+        - 127.0.0.1:37017
+    database: openim_v3
+    username: openIM
+    password: openIM123
+    maxPoolSize: 100
+s3_engine: minio
