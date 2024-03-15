@@ -17,6 +17,7 @@ package utils
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,16 +34,21 @@ type MongoConfig struct {
 }
 
 func (c MongoConfig) buildURI() string {
-	if c.Username != "" && c.Password != "" {
-		return fmt.Sprintf("mongodb://%s:%s@%s/%s?maxPoolSize=%d", c.Username, c.Password, c.Address, c.Database, c.MaxPoolSize)
+	if c.Uri != "" {
+		return c.Uri
 	}
-	return fmt.Sprintf("mongodb://%s/%s?maxPoolSize=%d", c.Address, c.Database, c.MaxPoolSize)
+	if c.Username != "" && c.Password != "" {
+		return fmt.Sprintf("mongodb://%s:%s@%s/%s?maxPoolSize=%d", c.Username, c.Password, strings.Join(c.Address, ","), c.Database, c.MaxPoolSize)
+	}
+	return fmt.Sprintf("mongodb://%s/%s?maxPoolSize=%d", strings.Join(c.Address, ","), c.Database, c.MaxPoolSize)
 }
 
 func NewMongo(conf MongoConfig) (*mongo.Database, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
-	mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(conf.buildURI()))
+	uri := conf.buildURI()
+	fmt.Println("mongo uri:", uri)
+	mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
 		return nil, err
 	}

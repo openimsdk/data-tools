@@ -8,11 +8,16 @@ import (
 )
 
 func main() {
-	var path string
-	flag.StringVar(&path, "c", "", "path config file")
+	var (
+		path string
+		mode string
+	)
+	flag.StringVar(&path, "c", "config.yaml", "path config file")
+	flag.StringVar(&mode, "m", "auto", "optional auto toc tob")
 	flag.Parse()
-	if err := internal.Main(path); err != nil {
+	if err := internal.Main(path, mode); err != nil {
 		fmt.Println("run error", err)
+		os.Exit(1)
 		return
 	}
 	fmt.Println("run success")
