@@ -22,5 +22,7 @@ func (c MySQLConfig) buildURI() string {
 }
 
 func NewMySQL(conf MySQLConfig) (*gorm.DB, error) {
-	return gorm.Open(mysql.Open(conf.buildURI()), &gorm.Config{Logger: logger.Discard})
+	uri := conf.buildURI()
+	fmt.Println("mysql uri:", uri)
+	return gorm.Open(mysql.Open(uri), &gorm.Config{Logger: logger.Discard})
 }

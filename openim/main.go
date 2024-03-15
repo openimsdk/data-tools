@@ -9,10 +9,11 @@ import (
 
 func main() {
 	var path string
-	flag.StringVar(&path, "c", "", "path config file")
+	flag.StringVar(&path, "c", "config.yaml", "path config file")
 	flag.Parse()
 	if err := internal.Main(path); err != nil {
 		fmt.Println("run error", err)
+		os.Exit(1)
 		return
 	}
 	fmt.Println("run success")

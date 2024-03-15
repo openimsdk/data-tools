@@ -30,7 +30,7 @@ func NewTask[A interface{ TableName() string }, B any, C any](gormDB *gorm.DB, m
 	for page := 0; ; page++ {
 		res := make([]A, 0, batch)
 		if err := gormDB.Limit(batch).Offset(page * batch).Find(&res).Error; err != nil {
-			if mysqlErr, ok := err.(*mysql.MySQLError); ok && mysqlErr.Number == 1146 {
+			if IsMySQLTableNotExist(err) {
 				return nil // table not exist
 			}
 			return fmt.Errorf("find mysql table %s failed, err: %w", tableName, err)
@@ -86,4 +86,11 @@ func getColl(obj any) (_ *mongo.Collection, err error) {
 		}
 	}
 	return nil, errors.New("not found model collection")
+}
+
+func IsMySQLTableNotExist(err error) bool {
+	if mysqlErr, ok := err.(*mysql.MySQLError); ok && mysqlErr.Number == 1146 {
+		return true // table not exist
+	}
+	return false
 }
